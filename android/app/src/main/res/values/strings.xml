@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Self Care</string>
+    <string name="facebook_app_id">376933390049778</string>
+    <string name="fb_login_protocol_scheme">fb376933390049778</string>
+</resources>
