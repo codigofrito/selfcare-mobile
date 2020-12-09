@@ -19,10 +19,10 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
       final apiRoutePath = '/usersHasTasksById';
       final response = await MainApiProvider.private.post(
         apiRoutePath,
-         data: {
+        data: {
           "user_id": "189476123894526", //sessionUser.userData.id,
         },
-      );       
+      );
       return RepositoryResponse.succeed(response);
     } on DioError catch (error) {
       return RepositoryResponse.failed(error);
@@ -61,13 +61,7 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
       final apiRoutePath = '/usersHasTasks';
       final response = await MainApiProvider.private.post(
         apiRoutePath,
-        data: {
-          "user_id": "189476123894526", //sessionUser.userData.id,
-          "task_id": 1001, //requestData['taskId'],
-          "push_notification": "1",
-          "period": "3", //requestData['periodSet'],
-          "schedule": "15:00", //requestData['scheduleTime'],
-        },
+        data: requestData,
       );
 
       return RepositoryResponse.succeed(response);

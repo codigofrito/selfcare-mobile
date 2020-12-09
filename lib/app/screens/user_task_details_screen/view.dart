@@ -115,7 +115,7 @@ class UserTaskDetailsScreen extends GetView<UserTaskDetailsScreenController> {
                                 ),
                                 TextSpan(
                                   text:
-                                      '${DateFormat('EEEE', 'pt_Br').format(Moment.nextDates(DateTime.now(), int.parse(userTask.period)).first).capitalizeFirst}',
+                                     '${DateFormat('EEEE', 'pt_Br').format(Moment.nextDates(DateTime.now(), int.parse(userTask.period)).first).capitalizeFirst}',
                                   style: TextStyle(
                                     fontSize: 25,
                                     color: Colors.grey[600],

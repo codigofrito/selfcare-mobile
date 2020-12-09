@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:selfcare/app/data/repositories/user_has_tasks_repository.dart';
 import 'package:selfcare/app/shared/utils/moment.dart';
 import 'package:tinycolor/tinycolor.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +98,7 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
                   elevation: 2.0,
                   fillColor: Colors.white,
                   child: InkWell(
-                    onTap: () => this._showAlert(),
+                    onTap: () => this._showAlert(indexTask),
                     child: FaIcon(
                       FontAwesomeIcons.clock,
                       color: TinyColor(
@@ -114,36 +115,110 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
         ),
       );
 
-  void _showAlert() {
-    Set<String> schedule = {};
+  void _showAlert(dynamic taskId) {
+    Set<int> schedule = {};
+    String scheduleHour;
+    String scheduleMinute;
+
     showDialog(
       context: Get.context,
       builder: (_) {
         return AlertDialog(
-          contentPadding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 24),
+          contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 24),
           insetPadding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 24),
-          title: Text('Seu cu'),
+          title: Text(
+            'Agendar atividade',
+            style: TextStyle(color: Get.theme.primaryColor),
+          ),
+          actions: [
+            FlatButton(
+              onPressed: () => Navigator.of(Get.context).pop(),
+              padding: EdgeInsets.symmetric(horizontal: 32.0),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(
+                  color: Get.theme.errorColor,
+                ),
+              ),
+            ),
+            RaisedButton(
+              onPressed: () async {
+                UserHasTasksRepository repository = UserHasTasksRepository();
+                print(taskId);
+                print(int.parse(scheduleHour));
+                print(int.parse(scheduleMinute));
+                print(schedule.toString());
+                print(DateTime(
+                  2020,
+                  1,
+                  1,
+                  int.parse(scheduleHour),
+                  int.parse(scheduleMinute),
+                ).toString().replaceFirst('.000', ''));
+                final response = await repository.store({
+                  "user_id": "189476123894526",
+                  "task_id": '100' + taskId.toString(),
+                  "push_notification": "0",
+                  "period": schedule.first
+                      .toString()
+                      .replaceFirst('{', '')
+                      .replaceFirst('}', ''),
+                  "schedule": DateTime(
+                    2020,
+                    1,
+                    1,
+                    int.parse(scheduleHour),
+                    int.parse(scheduleMinute),
+                  ).toString(),
+                });
+                if (!response.hasError) {
+                  Get.snackbar('Cadastro tarefa', 'TOP');
+                  //Navigator.of(Get.context).pop();
+                } else {
+                  print(response.error.response.data);
+                  Get.snackbar('Cadastro tarefa', 'NÃO DEU =/');
+                }
+              },
+              color: Get.theme.primaryColor,
+              padding: EdgeInsets.symmetric(horizontal: 32.0),
+              child: Text(
+                'Confirmar',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          ],
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(7, (index) {
-                  final day = describeEnum(Days.values[index]);
-                  return DayWeek(
-                    label: day,
-                    onEnabled: () => schedule.add(day),
-                    onDisabled: () => schedule.remove(day),
-                  );
-                }),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: BouncingScrollPhysics(),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(7, (index) {
+                    final day = Days.values[index].index + 1;
+                    return DayWeek(
+                      label: describeEnum(Days.values[index]),
+                      onEnabled: () => schedule.add(day),
+                      onDisabled: () => schedule.remove(day),
+                    );
+                  }),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Flexible(child: TimePicker.hours(onPick: (value) => null)),
-                    Expanded(child: SizedBox(width: 16.0)),
-                    Flexible(child: TimePicker.minutes(onPick: (value) => null)),
+                    Flexible(
+                      child: TimePicker.hours(
+                          onPick: (value) => scheduleHour = value),
+                    ),
+                    Flexible(child: SizedBox(width: 0.0)),
+                    Flexible(
+                      child: TimePicker.minutes(
+                          onPick: (value) => scheduleMinute = value),
+                    ),
                   ],
                 ),
               ),
@@ -277,9 +352,16 @@ class _TimePickerState extends State<TimePicker> {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField(
+        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 18),
         onChanged: this.widget.onPick,
+        value: (this.widget.maxAllowedValues - 1).toString(),
         decoration: InputDecoration(
-          labelText: '${this.widget.maxAllowedValues == 24 ? 'Hora' : 'Minuto'}',
+          labelText:
+              '${this.widget.maxAllowedValues == 24 ? 'Hora' : 'Minuto'}',
+          labelStyle: TextStyle(
+            color: Theme.of(context).primaryColor,
+            fontSize: 21,
+          ),
           border: InputBorder.none,
         ),
         items: List.generate(
