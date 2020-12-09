@@ -3,8 +3,7 @@ import 'package:selfcare/app/data/interfaces/repository_interface.dart';
 import 'package:selfcare/app/data/models/task_model.dart';
 import 'package:selfcare/app/data/providers/main_api.dart';
 
-class UserHasTasksRepository
-    implements MainApiRepository<Task> {
+class UserHasTasksRepository implements MainApiRepository<Task> {
   RepositoryStatus _status = RepositoryStatus.none;
 
   @override
@@ -38,13 +37,23 @@ class UserHasTasksRepository
   }
 
   @override
-  Future<RepositoryResponse> store({requestData}) {
-    throw UnimplementedError();
+  Future<RepositoryResponse> store({requestData}) async {
+    try {
+      _status = RepositoryStatus.requesting;
+
+      final apiRoutePath = '/usersHasTasks';
+      final response = await MainApiProvider.private.post(apiRoutePath);
+
+      return RepositoryResponse.succeed(response);
+    } on DioError catch (error) {
+      return RepositoryResponse.failed(error);
+    } finally {
+      _status = RepositoryStatus.completed;
+    }
   }
 
   @override
   Future<RepositoryResponse> update({requestData}) {
     throw UnimplementedError();
   }
-
 }
