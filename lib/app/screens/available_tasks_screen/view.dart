@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:selfcare/app/data/repositories/user_has_tasks_repository.dart';
+import 'package:selfcare/app/data/session_config/session_user.dart';
+import 'package:selfcare/app/screens/home_screen/controller.dart';
 import 'package:selfcare/app/shared/utils/moment.dart';
 import 'package:tinycolor/tinycolor.dart';
 import 'package:flutter/material.dart';
@@ -144,20 +146,10 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
             RaisedButton(
               onPressed: () async {
                 UserHasTasksRepository repository = UserHasTasksRepository();
-                print(taskId);
-                print(int.parse(scheduleHour));
-                print(int.parse(scheduleMinute));
-                print(schedule.toString());
-                print(DateTime(
-                  2020,
-                  1,
-                  1,
-                  int.parse(scheduleHour),
-                  int.parse(scheduleMinute),
-                ).toString().replaceFirst('.000', ''));
+
                 final response = await repository.store({
-                  "user_id": "189476123894526",
-                  "task_id": '100' + taskId.toString(),
+                  "user_id": Get.find<SessionUser>().userData.id,
+                  "task_id": controller.availableTaskList[taskId]?.id,
                   "push_notification": "0",
                   "period": schedule.first
                       .toString()
@@ -172,11 +164,37 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
                   ).toString(),
                 });
                 if (!response.hasError) {
-                  Get.snackbar('Cadastro tarefa', 'TOP');
-                  //Navigator.of(Get.context).pop();
+                  Get.find<HomeScreenController>().refresh();
+                  Get.back(closeOverlays: true);
+                  Get.back();
                 } else {
+                  showDialog(
+                      context: Get.context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(
+                            'Algo deu errado =/',
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                          content: Text(
+                            'Parece que você já agendou esta atividade',
+                          ),
+                          actions: [
+                            FlatButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text(
+                                'Entendi',
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            )
+                          ],
+                        );
+                      });
                   print(response.error.response.data);
-                  Get.snackbar('Cadastro tarefa', 'NÃO DEU =/');
                 }
               },
               color: Get.theme.primaryColor,
