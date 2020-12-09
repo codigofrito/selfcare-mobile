@@ -10,12 +10,12 @@ class SplashScreenController extends GetxController
     with SingleGetTickerProviderMixin {
   AnimationController rotateHandsController;
 
-
   @override
   void onInit() async {
-    
     rotateHandsController = AnimationController(
-        duration: Duration(milliseconds: 1500), vsync: this);
+      duration: Duration(milliseconds: 1500),
+      vsync: this,
+    );
 
     rotateHandsController.repeat();
 
@@ -33,7 +33,8 @@ class SplashScreenController extends GetxController
     super.onReady();
 
     SessionUser currentUser = Get.find<SessionUser>();
-    
+    await currentUser.signInFromLocalStorage();
+
     Future.delayed(Duration(milliseconds: 1500), () async {
       if (currentUser.isLogged) {
         Get.offAll(

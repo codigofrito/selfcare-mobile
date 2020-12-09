@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:selfcare/app/data/models/user_model.dart';
 import 'package:selfcare/app/data/models/user_task.dart';
+import 'package:selfcare/app/data/session_config/local_storage.dart';
 
 class SessionUser {
   bool _isLogged;
@@ -18,17 +19,24 @@ class SessionUser {
   User get userData => this._userData;
 
   Future<bool> signIn(
-      String displayName, String userFirebaseId, String userUrlPhoto) async {
-    _isLogged = true;
-    _userData = User(
+    String displayName,
+    String userFirebaseId,
+    String userUrlPhoto,
+  ) async {
+    this._isLogged = true;
+    this._userData = User(
       displayName,
       userFirebaseId,
       userUrlPhoto,
     );
+    await LocalStorage.setLastSession(this._userData);
     return true;
   }
 
-  Future<void> signInFromLocalStorage() async {}
+  Future<void> signInFromLocalStorage() async {
+    User user = await LocalStorage.getLastSession();
+    if (user != null) this.signIn(user.name, user.id, user.userUrlPhoto);
+  }
 
   Future<void> sigOut() async {
     _isLogged = false;

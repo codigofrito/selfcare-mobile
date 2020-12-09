@@ -1,22 +1,41 @@
 import 'package:selfcare/app/data/interfaces/data_model_interface.dart';
 
 class User implements DataModel {
-  String id;
-  String name;
-  String userUrlPhoto;
+  User([
+    String name,
+    String id,
+    String userUrlPhoto,
+  ])  : this._name = name,
+        this._id = id,
+        this._userUrlPhoto = userUrlPhoto;
 
-  User([String name, String id, String userUrlPhoto])
-      : this.name = name ?? null,
-        this.id = id ?? null,
-        this.userUrlPhoto = userUrlPhoto ?? null;
+  User.fromJson(Map<String, dynamic> json) {
+    this.fromJson(json);
+  }
+
+  String _id;
+  String _name;
+  String _userUrlPhoto;
+
+  String get id => this._id;
+  String get name => this._name;
+  String get userUrlPhoto => this._userUrlPhoto;
 
   @override
-  fromJson(Map<String, dynamic> json) {
-    throw UnimplementedError();
+  void fromJson(Map<String, dynamic> json) {
+    if (json != null) {
+      this._id = json['id'];
+      this._name = json['name'];
+      this._userUrlPhoto = json['userUrlPhoto'];
+    }
   }
 
   @override
   Map<String, dynamic> toMap() {
-    throw UnimplementedError();
+    return {
+      'id': this._id,
+      'name': this._name,
+      'userUrlPhoto': this._userUrlPhoto,
+    };
   }
 }
