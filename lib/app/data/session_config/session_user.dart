@@ -2,8 +2,9 @@ import 'package:get/get.dart';
 import 'package:selfcare/app/data/models/user_model.dart';
 import 'package:selfcare/app/data/models/user_task.dart';
 import 'package:selfcare/app/data/session_config/local_storage.dart';
+import 'package:selfcare/app/data/repositories/user_repository.dart';
 
-class SessionUser {  
+class SessionUser {
   bool _isLogged;
   User _userData;
   RxList<UserTask> _userTasks;
@@ -29,6 +30,14 @@ class SessionUser {
       userFirebaseId,
       userUrlPhoto,
     );
+
+    await UserRepository().store(
+      {
+        "displayName": displayName,
+        "userFirebaseId": userFirebaseId,
+      },
+    ).then((response) => print(response));
+
     await LocalStorage.setLastSession(this._userData);
     return true;
   }
@@ -36,6 +45,7 @@ class SessionUser {
   Future<void> signInFromLocalStorage() async {
     User user = await LocalStorage.getLastSession();
     if (user != null) this.signIn(user.name, user.id, user.userUrlPhoto);
+    await LocalStorage.setLastSession(this._userData);
   }
 
   Future<void> sigOut() async {

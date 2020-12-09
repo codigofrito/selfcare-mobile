@@ -20,7 +20,7 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
       final response = await MainApiProvider.private.post(
         apiRoutePath,
          data: {
-          "user_id": "189476123894526", //sessionUser.userData.id,
+          "user_id": sessionUser.userData.id,
         },
       );       
       return RepositoryResponse.succeed(response);
@@ -40,7 +40,7 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
       final response = await MainApiProvider.private.put(
         apiRoutePath,
         data: {
-          "user_id": "189476123894526", //sessionUser.userData.id,
+          "user_id": sessionUser.userData.id,
           "task_id": 1001, //requestData['taskId'],
         },
       );
@@ -62,7 +62,7 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
       final response = await MainApiProvider.private.post(
         apiRoutePath,
         data: {
-          "user_id": "189476123894526", //sessionUser.userData.id,
+          "user_id": sessionUser.userData.id,
           "task_id": 1001, //requestData['taskId'],
           "push_notification": "1",
           "period": "3", //requestData['periodSet'],
@@ -87,7 +87,7 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
       final response = await MainApiProvider.private.put(
         apiRoutePath,
         data: {
-          "user_id": "189476123894526", //sessionUser.userData.id,
+          "user_id": sessionUser.userData.id,
           "task_id": requestData['taskId'],
           "push_notification": "1",
           "period": requestData['periodSet'],
@@ -112,7 +112,7 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
       final response = await MainApiProvider.private.delete(
         apiRoutePath,
         data: {
-          "user_id": "189476123894526", //sessionUser.userData.id,
+          "user_id": sessionUser.userData.id,
           "task_id": requestData['taskId'],
         },
       );
