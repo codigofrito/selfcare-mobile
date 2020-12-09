@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import 'package:selfcare/app/data/models/user_task.dart';
 import 'package:selfcare/app/data/repositories/user_has_tasks_repository.dart';
 import 'package:selfcare/app/data/session_config/session_user.dart';
+import 'package:selfcare/app/routes/screen_routes.dart';
 import 'package:selfcare/app/screens/splash_screen/binding.dart';
 import 'package:selfcare/app/screens/splash_screen/view.dart';
-import 'components/user_task_details_page/view.dart';
 
 class HomeScreenController extends GetxController {
   RxBool _isLoading = true.obs;
@@ -48,16 +48,12 @@ class HomeScreenController extends GetxController {
   }
 
   openTaskDetails(int indexTask) {
-    Get.to(
-      UserTaskDetailsPage(),
+    Get.toNamed(
+      ScreenRoutes.USER_TASK_DETAILS,
       arguments: {
         "key": indexTask,
-        "task": userTaskList[indexTask],
+        "userTask": userTaskList[indexTask],
       },
-      duration: Duration(
-        milliseconds: 500,
-      ),
-      transition: Transition.fadeIn,
     );
   }
 

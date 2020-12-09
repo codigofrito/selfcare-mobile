@@ -3,7 +3,7 @@ import 'package:selfcare/app/data/models/user_model.dart';
 import 'package:selfcare/app/data/models/user_task.dart';
 import 'package:selfcare/app/data/session_config/local_storage.dart';
 
-class SessionUser {
+class SessionUser {  
   bool _isLogged;
   User _userData;
   RxList<UserTask> _userTasks;

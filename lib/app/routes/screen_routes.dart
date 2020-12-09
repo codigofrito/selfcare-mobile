@@ -4,4 +4,5 @@ abstract class ScreenRoutes {
   static const SIGN_IN = '/SignIn';
   static const HOME = '/';
   static const AVAILABLE_TASKS = '/AvailableTasks';
+  static const USER_TASK_DETAILS = '/UserTaskDetails';
 }

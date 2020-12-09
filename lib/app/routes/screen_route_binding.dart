@@ -11,6 +11,8 @@ import 'package:selfcare/app/screens/sign_in_screen/binding.dart';
 import 'package:selfcare/app/screens/sign_in_screen/view.dart';
 import 'package:selfcare/app/screens/splash_screen/binding.dart';
 import 'package:selfcare/app/screens/splash_screen/view.dart';
+import 'package:selfcare/app/screens/user_task_details_screen/binding.dart';
+import 'package:selfcare/app/screens/user_task_details_screen/view.dart';
 
 abstract class ScreenRouteBinding {
   static const INITIAL = ScreenRoutes.SPLASH;
@@ -32,6 +34,11 @@ abstract class ScreenRouteBinding {
       name: ScreenRoutes.AVAILABLE_TASKS,
       page: () => AvailableTasksScreen(),
       binding: AvailableTasksScreenBind(),
+    ),
+    GetPage(
+      name: ScreenRoutes.USER_TASK_DETAILS,
+      page: () => UserTaskDetailsScreen(),
+      binding: UserTaskDetailsScreenBind(),
     ),
     GetPage(
       name: ScreenRoutes.SIGN_IN,

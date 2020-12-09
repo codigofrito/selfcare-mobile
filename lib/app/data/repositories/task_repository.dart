@@ -28,22 +28,22 @@ class TaskRepository
   }
 
   @override
-  Future<RepositoryResponse> destroy({requestData}) {
+  Future<RepositoryResponse> destroy(requestData) {
     throw UnimplementedError();
   }
 
   @override
-  Future<RepositoryResponse> show({requestData}) {
+  Future<RepositoryResponse> show(requestData) {
     throw UnimplementedError();
   }
 
   @override
-  Future<RepositoryResponse> store({requestData}) {
+  Future<RepositoryResponse> store(requestData) {
     throw UnimplementedError();
   }
 
   @override
-  Future<RepositoryResponse> update({requestData}) {
+  Future<RepositoryResponse> update(requestData) {
     throw UnimplementedError();
   }
 }

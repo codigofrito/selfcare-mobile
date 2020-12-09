@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 abstract class MainApiProvider {
   static final options = BaseOptions(
-    baseUrl: 'http://api-selfcare.machado.codes',
+    baseUrl: 'https://api.selfcare.app.br',
     contentType: 'application/json; charset=utf-8',
     responseType: ResponseType.plain,
     connectTimeout: 90000,

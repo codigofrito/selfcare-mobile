@@ -1,7 +1,7 @@
 import 'package:selfcare/app/data/interfaces/data_model_interface.dart';
 
 class Task implements DataModel {
-  int id;
+  String id;
   String title;
   String description;
   String imageUrl;
@@ -23,14 +23,17 @@ class Task implements DataModel {
 
   @override
   fromJson(Map<String, dynamic> json) {
-    id = json['id'] ?? 0;
-    title =  json['title'] ?? json['titulo'];
+    id = json['id'] != null
+        ? json['id'].toString()
+        : json['task_id'] != null ? json['task_id'].toString() : null;
+    title = json['title'] ?? json['titulo'];
     description = json['description'] ?? json['descricao'];
     imageUrl = json['image_url'] ?? json['img'];
     createdAt = json['created_at'] == null ? "" : json['created_at'].toString();
     updatedAt = json['updated_at'] == null ? "" : json['updated_at'].toString();
   }
 
+  @override
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;

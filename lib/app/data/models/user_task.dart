@@ -3,8 +3,8 @@ import 'package:selfcare/app/data/models/task_model.dart';
 
 class UserTask implements DataModel {
   bool pushNotification;
-  int period;
-  DateTime schedule;
+  String period;
+  String schedule;
   Task task;
 
   UserTask({this.pushNotification, this.period, this.schedule, this.task});
@@ -12,10 +12,8 @@ class UserTask implements DataModel {
   @override
   fromJson(Map<String, dynamic> json) {
     pushNotification = json['push_notification'] == 1;
-    period = int.parse(json['period']);
-    schedule = json['schedule'] == null || json['schedule'] == ""
-        ? null
-        : DateTime.parse(json['schedule'].toString());
+    period = json['period'].toString();
+    schedule = json['schedule'].toString();
     task = json['task'] != null ? new Task.fromJson(json['task']) : null;
   }
 

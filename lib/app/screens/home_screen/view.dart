@@ -264,7 +264,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                     ),
                     child: Center(
                       child: Text(
-                        "${controller.sessionUser.userTaskList.isEmpty ? "" : Moment.nextDates(DateTime.now(), controller.userTaskList[indexTask].period).first.day}",
+                        "${controller.sessionUser.userTaskList.isEmpty ? "" : Moment.nextDates(DateTime.now(), int.parse(controller.userTaskList[indexTask].period)).first.day}",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -307,7 +307,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                         alignment: WrapAlignment.center,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children:
-                            "${controller.sessionUser.userTaskList.isEmpty ? "" : DateFormat('MMM').format(Moment.nextDates(DateTime.now(), 3).first)}"
+                            "${controller.sessionUser.userTaskList.isEmpty ? "" : DateFormat('MMM', 'pt_Br').format(Moment.nextDates(DateTime.now(), int.parse(controller.userTaskList[indexTask].period)).first).capitalizeFirst}"
                                 .split("")
                                 .map(
                                   (string) => Text(

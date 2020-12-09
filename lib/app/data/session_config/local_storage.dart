@@ -39,4 +39,5 @@ class LocalStorage {
 
     return null;
   }
+  
 }

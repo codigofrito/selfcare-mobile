@@ -4,11 +4,12 @@ import 'dart:convert';
 abstract class MainApiRepository<D> {
   RepositoryStatus get status;
   Future<RepositoryResponse> index({dynamic requestData});
-  Future<RepositoryResponse> show({dynamic requestData});
-  Future<RepositoryResponse> store({dynamic requestData});
-  Future<RepositoryResponse> update({dynamic requestData});
-  Future<RepositoryResponse> destroy({dynamic requestData});
+  Future<RepositoryResponse> show(dynamic requestData);
+  Future<RepositoryResponse> store(dynamic requestData);
+  Future<RepositoryResponse> update(dynamic requestData);
+  Future<RepositoryResponse> destroy(dynamic requestData);
 }
+
 abstract class DefaultRepository<D> {
   RepositoryStatus get status;
 }
