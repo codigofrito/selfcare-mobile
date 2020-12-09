@@ -39,6 +39,7 @@ class SessionUser {
   }
 
   Future<void> sigOut() async {
+    LocalStorage.clearSession();
     _isLogged = false;
     _userData = User();
   }

@@ -8,6 +8,11 @@ class LocalStorage {
   static final _key = Key.fromUtf8(r'v8y/A?D(G+KbPeShVmYq3t6w9z$C&E)H');
   static final _iv = IV.fromLength(16);
 
+  static Future<void> clearSession() async {
+    final _preferences = await SharedPreferences.getInstance();
+    _preferences.clear();
+  }
+
   static Future<void> setLastSession(User user) async {
     final userData = user?.toMap();
 
@@ -25,7 +30,7 @@ class LocalStorage {
     final _preferences = await SharedPreferences.getInstance();
     final data = _preferences.getString('lastSession');
 
-    if (data != null) {
+    if (data != null && data.isNotEmpty) {
       final encrypter = Encrypter(AES(_key));
       return User.fromJson(json.decode(
         encrypter.decrypt64(data, iv: _iv),
