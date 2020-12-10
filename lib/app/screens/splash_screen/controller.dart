@@ -16,9 +16,7 @@ class SplashScreenController extends GetxController
       duration: Duration(milliseconds: 1500),
       vsync: this,
     );
-
     rotateHandsController.repeat();
-
     super.onInit();
   }
 
@@ -31,7 +29,6 @@ class SplashScreenController extends GetxController
   @override
   void onReady() async {
     super.onReady();
-
     SessionUser currentUser = Get.find<SessionUser>();
     await currentUser.signInFromLocalStorage();
 
@@ -40,7 +37,7 @@ class SplashScreenController extends GetxController
         Get.offAll(
           HomeScreen(),
           binding: HomeScreenBind(),
-          duration: Duration(milliseconds: 2000),
+          duration: Duration(milliseconds: 1500),
           transition: Transition.fadeIn,
           curve: Curves.easeIn,
         );
@@ -48,7 +45,7 @@ class SplashScreenController extends GetxController
         Get.offAll(
           LandingPageScreen(),
           binding: LandingPageScreenBind(),
-          duration: Duration(milliseconds: 2000),
+          duration: Duration(milliseconds: 1500),
           transition: Transition.fadeIn,
           curve: Curves.easeOut,
         );

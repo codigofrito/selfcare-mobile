@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:selfcare/app/data/interfaces/repository_interface.dart';
-import 'package:selfcare/app/data/models/task_model.dart';
+import 'package:selfcare/app/data/models/user_model.dart';
 import 'package:selfcare/app/data/providers/main_api.dart';
 import 'package:selfcare/app/data/session_config/session_user.dart';
 
-class UserRepository implements MainApiRepository<Task> {
+class UserRepository implements MainApiRepository<User> {
   RepositoryStatus _status = RepositoryStatus.none;
   SessionUser sessionUser = Get.find<SessionUser>();
 
@@ -21,11 +21,11 @@ class UserRepository implements MainApiRepository<Task> {
       final response = await MainApiProvider.private.post(
         apiRoutePath,
         data: {
-          "id": requestData['userFirebaseId'],
-          "name": requestData['displayName'],
+          "id": requestData.id,
+          "name": requestData.name,
         },
       );
-      
+
       return RepositoryResponse.succeed(response);
     } on DioError catch (error) {
       return RepositoryResponse.failed(error);
@@ -35,26 +35,22 @@ class UserRepository implements MainApiRepository<Task> {
   }
 
   @override
-  Future<RepositoryResponse> destroy(requestData) {
-    // TODO: implement destroy
+  Future<RepositoryResponse> destroy(requestData) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<RepositoryResponse> index({requestData}) {
-    // TODO: implement index
+  Future<RepositoryResponse> index({requestData}) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<RepositoryResponse> show(requestData) {
-    // TODO: implement show
+  Future<RepositoryResponse> show(requestData) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<RepositoryResponse> update(requestData) {
-    // TODO: implement update
+  Future<RepositoryResponse> update(requestData) async {
     throw UnimplementedError();
   }
 }

@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:selfcare/app/data/models/user_task.dart';
-import 'package:selfcare/app/data/session_config/session_user.dart';
 import 'package:selfcare/app/shared/components/custom_app_bar/view.dart';
 import 'package:tinycolor/tinycolor.dart';
 import 'package:selfcare/app/shared/utils/moment.dart';
+import 'package:selfcare/app/shared/components/page_header/view.dart';
 import 'controller.dart';
 
 class UserTaskDetailsScreen extends GetView<UserTaskDetailsScreenController> {
@@ -25,18 +25,7 @@ class UserTaskDetailsScreen extends GetView<UserTaskDetailsScreenController> {
                 SizedBox(
                   height: Get.width * .85,
                 ),
-                Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: TinyColor(Theme.of(context).primaryColor)
-                        .brighten(5)
-                        .color,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
-                  ),
-                ),
+                PageHeader(),
                 Row(
                   children: <Widget>[
                     IconButton(
@@ -115,7 +104,7 @@ class UserTaskDetailsScreen extends GetView<UserTaskDetailsScreenController> {
                                 ),
                                 TextSpan(
                                   text:
-                                     '${DateFormat('EEEE', 'pt_Br').format(Moment.nextDates(DateTime.now(), int.parse(userTask.period)).first).capitalizeFirst}',
+                                      '${DateFormat('EEEE', 'pt_Br').format(Moment.nextDates(DateTime.now(), int.parse(userTask.period)).first).capitalizeFirst}',
                                   style: TextStyle(
                                     fontSize: 25,
                                     color: Colors.grey[600],
@@ -206,7 +195,8 @@ class UserTaskDetailsScreen extends GetView<UserTaskDetailsScreenController> {
                         context: context,
                         builder: (_) => AlertDialog(
                           content: Text(
-                              "Deseja realmente remover essa tarefa da sua lista?"),
+                            "Deseja realmente remover essa tarefa da sua lista?",
+                          ),
                           actions: [
                             ClipRRect(
                               borderRadius: BorderRadius.all(
@@ -217,8 +207,8 @@ class UserTaskDetailsScreen extends GetView<UserTaskDetailsScreenController> {
                                 color: Colors.red,
                                 textColor: Colors.white,
                                 child: Text("Remover"),
-                                onPressed: () => controller.deleteTask(
-                                    userTask.task.id, taskKey),
+                                onPressed: () =>
+                                    controller.deleteTask(userTask, taskKey),
                               ),
                             ),
                             ClipRRect(

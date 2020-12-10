@@ -31,21 +31,23 @@ class SessionUser {
       userUrlPhoto,
     );
 
-    await UserRepository().store(
-      {
-        "displayName": displayName,
-        "userFirebaseId": userFirebaseId,
-      },
-    ).then((response) => print(response));
+    await UserRepository()
+        .store(User(displayName, userFirebaseId))
+        .then((response) => print(response));
 
-    await LocalStorage.setLastSession(this._userData);
+    await LocalStorage.setUserData(this._userData);
     return true;
   }
 
   Future<void> signInFromLocalStorage() async {
     User user = await LocalStorage.getLastSession();
-    if (user != null) this.signIn(user.name, user.id, user.userUrlPhoto);
-    await LocalStorage.setLastSession(this._userData);
+    if (user != null)
+      this.signIn(
+        user.name,
+        user.id,
+        user.userUrlPhoto,
+      );
+    await LocalStorage.setUserData(this._userData);
   }
 
   Future<void> sigOut() async {

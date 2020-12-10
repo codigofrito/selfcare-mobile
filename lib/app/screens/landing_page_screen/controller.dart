@@ -14,10 +14,7 @@ class LandingPageScreenController extends GetxController
   void onInit() async {
     rotateHandsController = AnimationController(
         duration: Duration(milliseconds: 2500), vsync: this);
-
- 
     rotateHandsController.repeat();
-
     super.onInit();
   }
 

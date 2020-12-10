@@ -1,11 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:selfcare/app/data/repositories/user_has_tasks_repository.dart';
-import 'package:selfcare/app/data/session_config/session_user.dart';
-import 'package:selfcare/app/screens/home_screen/controller.dart';
-import 'package:selfcare/app/shared/utils/moment.dart';
-import 'package:tinycolor/tinycolor.dart';
+import 'package:selfcare/app/shared/components/page_header/view.dart';
 import 'package:flutter/material.dart';
 import 'package:selfcare/app/shared/components/custom_app_bar/view.dart';
 
@@ -22,30 +18,41 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
             onRefresh: () => controller.refresh(),
             child: ListView(
               children: <Widget>[
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Container(
-                    child: Text(
-                      "Adicione mais uma tarefa a sua lista:",
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                Stack(
+                  alignment: AlignmentDirectional.topCenter,
+                  children: <Widget>[
+                    PageHeader(),
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          color: Colors.white,
+                          onPressed: () => Get.back(),
+                        ),
+                        Text(
+                          "Agendar nova tarefa",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 50, bottom: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: List.generate(
+                          (controller.availableTaskList.length ??
+                              controller.perPage),
+                          (index) => _taskRow(index),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: List.generate(
-                      (controller.availableTaskList.length ??
-                          controller.perPage),
-                      (index) => userTaskRow(index),
-                    )),
               ],
             ),
           ),
@@ -54,193 +61,212 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
     );
   }
 
-  Widget userTaskRow(indexTask) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
-        child: Stack(
-          alignment: AlignmentDirectional.centerEnd,
-          children: <Widget>[
-            SizedBox(
-              width: Get.width,
-              height: Get.width * 0.8,
+  Widget _taskRow(indexTask) => Stack(
+        alignment: AlignmentDirectional.centerEnd,
+        children: <Widget>[
+          SizedBox(
+            width: Get.width,
+            height: 290,
+          ),
+          Positioned(
+            top: 20,
+            left: 0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50.0),
+              child: Container(
+                width: Get.width * .9,
+                height: 250,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+              ),
             ),
-            Positioned(
-              left: 0,
-              child: Padding(
+          ),
+          Positioned(
+            top: 50,
+            left: 0,
+            child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Hero(
-                  tag: 'taskImage$indexTask',
-                  createRectTween: (begin, end) {
-                    return RectTween(begin: begin, end: end);
-                  },
-                  child: Container(
-                    width: Get.width * 0.8,
-                    height: Get.width * 0.8,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(
-                          controller.availableTaskList[indexTask]?.imageUrl ??
-                              "",
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Hero(
+                      tag: 'taskImage$indexTask',
+                      createRectTween: (begin, end) {
+                        return RectTween(begin: begin, end: end);
+                      },
+                      child: Container(
+                        width: Get.width * 0.3,
+                        height: Get.width * 0.3,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              controller
+                                      .availableTaskList[indexTask].imageUrl ??
+                                  "",
+                            ),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
                         ),
                       ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Container(
+                      width: Get.width * 0.55,
+                      height: Get.width * 0.5,
+                      //color: Colors.red,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            '${controller.availableTaskList[indexTask].title}',
+                            style: TextStyle(
+                                fontSize: 23,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(Get.context).primaryColor),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            '${controller.availableTaskList[indexTask].description}',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 6,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: RawMaterialButton(
-                  onPressed: () => Moment.nextDates(DateTime.now(), 5),
-                  elevation: 2.0,
-                  fillColor: Colors.white,
-                  child: InkWell(
-                    onTap: () => this._showAlert(indexTask),
-                    child: FaIcon(
-                      FontAwesomeIcons.clock,
-                      color: TinyColor(
-                        Theme.of(Get.context).primaryColor,
-                      ).darken(30).color,
+                  ],
+                )),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 20,
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              child: MaterialButton(
+                height: 50,
+                color: Theme.of(Get.context).primaryColor,
+                textColor: Colors.white,
+                child: SizedBox(
+                  width: 100,
+                  child: FittedBox(
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          FontAwesomeIcons.calendarAlt,
+                          size: 15,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text("Agendar")
+                      ],
                     ),
                   ),
-                  padding: EdgeInsets.all(15.0),
-                  shape: CircleBorder(),
                 ),
+                onPressed: () => this._showAlert(indexTask),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       );
 
   void _showAlert(dynamic taskId) {
     Set<int> schedule = {};
-    String scheduleHour;
-    String scheduleMinute;
+    String scheduleHour = DateTime.now().hour.toString().padLeft(2, '0');
+    String scheduleMinute = DateTime.now().minute.toString().padLeft(2, '0');
 
     showDialog(
       context: Get.context,
       builder: (_) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 24),
-          insetPadding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 24),
-          title: Text(
-            'Agendar atividade',
-            style: TextStyle(color: Get.theme.primaryColor),
-          ),
-          actions: [
-            FlatButton(
-              onPressed: () => Navigator.of(Get.context).pop(),
-              padding: EdgeInsets.symmetric(horizontal: 32.0),
-              child: Text(
-                'Cancelar',
-                style: TextStyle(
-                  color: Get.theme.errorColor,
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: AlertDialog(
+            contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 24),
+            insetPadding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 24),
+            title: Text(
+              'Agendar atividade',
+              style: TextStyle(color: Get.theme.primaryColor),
+            ),
+            actions: [
+              FlatButton(
+                onPressed: () => Navigator.of(Get.context).pop(),
+                padding: EdgeInsets.symmetric(horizontal: 32.0),
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(
+                    color: Get.theme.errorColor,
+                  ),
                 ),
               ),
-            ),
-            RaisedButton(
-              onPressed: () async {
-                UserHasTasksRepository repository = UserHasTasksRepository();
-
-                final response = await repository.store({
-                  "user_id": Get.find<SessionUser>().userData.id,
-                  "task_id": controller.availableTaskList[taskId]?.id,
-                  "push_notification": "0",
-                  "period": schedule.first
+              RaisedButton(
+                onPressed: () => controller.storeNewUserTask(
+                  taskId,
+                  schedule.first
                       .toString()
                       .replaceFirst('{', '')
                       .replaceFirst('}', ''),
-                  "schedule": DateTime(
-                    2020,
-                    1,
-                    1,
-                    int.parse(scheduleHour),
-                    int.parse(scheduleMinute),
-                  ).toString(),
-                });
-                if (!response.hasError) {
-                  Get.find<HomeScreenController>().refresh();
-                  Get.back(closeOverlays: true);
-                  Get.back();
-                } else {
-                  showDialog(
-                      context: Get.context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text(
-                            'Algo deu errado =/',
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                          content: Text(
-                            'Parece que você já agendou esta atividade',
-                          ),
-                          actions: [
-                            FlatButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: Text(
-                                'Entendi',
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
-                            )
-                          ],
-                        );
-                      });
-                  print(response.error.response.data);
-                }
-              },
-              color: Get.theme.primaryColor,
-              padding: EdgeInsets.symmetric(horizontal: 32.0),
-              child: Text(
-                'Confirmar',
-                style: TextStyle(color: Colors.white),
-              ),
-            )
-          ],
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: BouncingScrollPhysics(),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List.generate(7, (index) {
-                    final day = Days.values[index].index + 1;
-                    return DayWeek(
-                      label: describeEnum(Days.values[index]),
-                      onEnabled: () => schedule.add(day),
-                      onDisabled: () => schedule.remove(day),
-                    );
-                  }),
+                  '$scheduleHour:$scheduleMinute',
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Flexible(
-                      child: TimePicker.hours(
-                          onPick: (value) => scheduleHour = value),
-                    ),
-                    Flexible(child: SizedBox(width: 0.0)),
-                    Flexible(
-                      child: TimePicker.minutes(
-                          onPick: (value) => scheduleMinute = value),
-                    ),
-                  ],
+                color: Get.theme.primaryColor,
+                padding: EdgeInsets.symmetric(horizontal: 32.0),
+                child: Text(
+                  'Confirmar',
+                  style: TextStyle(color: Colors.white),
                 ),
-              ),
+              )
             ],
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: BouncingScrollPhysics(),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(7, (index) {
+                      final day = Days.values[index].index + 1;
+                      return DayWeek(
+                        label: describeEnum(Days.values[index]),
+                        onEnabled: () => schedule.add(day),
+                        onDisabled: () => schedule.remove(day),
+                      );
+                    }),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Flexible(
+                        child: TimePicker.hours(
+                            onPick: (value) => scheduleHour = value),
+                      ),
+                      Flexible(child: SizedBox(width: 0.0)),
+                      Flexible(
+                        child: TimePicker.minutes(
+                            onPick: (value) => scheduleMinute = value),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

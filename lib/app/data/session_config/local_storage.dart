@@ -5,6 +5,7 @@ import 'package:selfcare/app/data/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
+
   static final _key = Key.fromUtf8(r'v8y/A?D(G+KbPeShVmYq3t6w9z$C&E)H');
   static final _iv = IV.fromLength(16);
 
@@ -13,7 +14,8 @@ class LocalStorage {
     _preferences.clear();
   }
 
-  static Future<void> setLastSession(User user) async {
+  static Future<void> setUserData(User user) async {
+    
     final userData = user?.toMap();
 
     if (userData != null && userData.isNotEmpty) {
@@ -22,13 +24,13 @@ class LocalStorage {
       final encryptedData = encrypter.encrypt(userDataJsonString, iv: _iv);
 
       final _preferences = await SharedPreferences.getInstance();
-      await _preferences.setString('lastSession', encryptedData.base64);
+      await _preferences.setString('userData', encryptedData.base64);
     }
   }
 
   static Future<User> getLastSession() async {
     final _preferences = await SharedPreferences.getInstance();
-    final data = _preferences.getString('lastSession');
+    final data = _preferences.getString('userData');
 
     if (data != null && data.isNotEmpty) {
       final encrypter = Encrypter(AES(_key));

@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:selfcare/app/data/models/task_model.dart';
+import 'package:selfcare/app/data/models/user_task.dart';
 import 'package:selfcare/app/data/repositories/task_repository.dart';
 import 'package:selfcare/app/data/session_config/session_user.dart';
+import 'package:selfcare/app/screens/home_screen/controller.dart';
 import 'package:selfcare/app/screens/splash_screen/binding.dart';
 import 'package:selfcare/app/screens/splash_screen/view.dart';
+import 'package:selfcare/app/data/repositories/users_has_tasks_repository.dart';
 
 class AvailableTasksScreenController extends GetxController {
   RxList<Task> _availableTaskList = <Task>[].obs;
@@ -18,6 +21,23 @@ class AvailableTasksScreenController extends GetxController {
   int get perPage => _perPage.value;
   bool get isloading => _isLoading.value;
   List<Task> get availableTaskList => _availableTaskList;
+
+  Future<void> storeNewUserTask(
+      int taskId, String period, String schedule) async {
+    UsersHasTasksRepository()
+        .store(
+      UserTask(
+        period: period,
+        schedule: schedule,
+        task: availableTaskList[taskId],
+      ),
+    )
+        .whenComplete(() {
+      Get.find<HomeScreenController>().refresh();
+      Get.back(closeOverlays: true);
+      Get.back();
+    });
+  }
 
   Future<void> fetchTasks() async {
     _isLoading.value = true;
@@ -38,7 +58,7 @@ class AvailableTasksScreenController extends GetxController {
   fillTaskList(dynamic json) {
     if (json != null) {
       json.forEach((task) {
-        _availableTaskList.add(          
+        _availableTaskList.add(
           Task.fromJson(task),
         );
       });

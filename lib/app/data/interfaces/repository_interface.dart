@@ -1,13 +1,12 @@
 import 'package:dio/dio.dart';
 import 'dart:convert';
-
 abstract class MainApiRepository<D> {
   RepositoryStatus get status;
-  Future<RepositoryResponse> index({dynamic requestData});
-  Future<RepositoryResponse> show(dynamic requestData);
-  Future<RepositoryResponse> store(dynamic requestData);
-  Future<RepositoryResponse> update(dynamic requestData);
-  Future<RepositoryResponse> destroy(dynamic requestData);
+  Future<RepositoryResponse> index({D requestData});
+  Future<RepositoryResponse> show(D requestData);
+  Future<RepositoryResponse> store(D requestData);
+  Future<RepositoryResponse> update(D requestData);
+  Future<RepositoryResponse> destroy(D requestData);
 }
 
 abstract class DefaultRepository<D> {

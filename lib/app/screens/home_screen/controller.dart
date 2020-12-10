@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:selfcare/app/data/models/user_task.dart';
-import 'package:selfcare/app/data/repositories/user_has_tasks_repository.dart';
+import 'package:selfcare/app/data/repositories/users_has_tasks_repository.dart';
 import 'package:selfcare/app/data/session_config/session_user.dart';
 import 'package:selfcare/app/routes/screen_routes.dart';
 import 'package:selfcare/app/screens/splash_screen/binding.dart';
@@ -25,7 +25,7 @@ class HomeScreenController extends GetxController {
     _isLoading.value = true;
     sessionUser.userTaskList.clear();
 
-    UserHasTasksRepository().index().then(
+    UsersHasTasksRepository().index().then(
       (response) {
         _isLoading.value = false;
         this.fillTaskList(

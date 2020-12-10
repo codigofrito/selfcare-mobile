@@ -3,8 +3,7 @@ import 'package:selfcare/app/data/interfaces/repository_interface.dart';
 import 'package:selfcare/app/data/models/task_model.dart';
 import 'package:selfcare/app/data/providers/main_api.dart';
 
-class TaskRepository
-    implements MainApiRepository<Task> {
+class TaskRepository implements MainApiRepository<Task> {
   RepositoryStatus _status = RepositoryStatus.none;
 
   @override

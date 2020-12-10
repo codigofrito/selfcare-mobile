@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:selfcare/app/data/interfaces/repository_interface.dart';
-import 'package:selfcare/app/data/models/task_model.dart';
+import 'package:selfcare/app/data/models/user_task.dart';
 import 'package:selfcare/app/data/providers/main_api.dart';
 import 'package:selfcare/app/data/session_config/session_user.dart';
 
-class UserHasTasksRepository implements MainApiRepository<Task> {
+class UsersHasTasksRepository implements MainApiRepository<UserTask> {
   RepositoryStatus _status = RepositoryStatus.none;
+
   SessionUser sessionUser = Get.find<SessionUser>();
 
   @override
@@ -39,7 +40,7 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
         apiRoutePath,
         data: {
           "user_id": sessionUser.userData.id,
-          "task_id": 1001, //requestData['taskId'],
+          "task_id": requestData.task.id,
         },
       );
 
@@ -55,13 +56,17 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
   Future<RepositoryResponse> store(requestData) async {
     try {
       _status = RepositoryStatus.requesting;
-
       final apiRoutePath = '/usersHasTasks';
       final response = await MainApiProvider.private.post(
         apiRoutePath,
-        data: requestData,
+        data: {
+          "user_id": sessionUser.userData.id,
+          "task_id": requestData.task.id,
+          "push_notification": "1",
+          "period": requestData.period,
+          "schedule": requestData.schedule,
+        },
       );
-
       return RepositoryResponse.succeed(response);
     } on DioError catch (error) {
       return RepositoryResponse.failed(error);
@@ -80,10 +85,10 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
         apiRoutePath,
         data: {
           "user_id": sessionUser.userData.id,
-          "task_id": requestData['taskId'],
+          "task_id": requestData.task.id,
           "push_notification": "1",
-          "period": requestData['periodSet'],
-          "schedule": requestData['scheduleTime'],
+          "period": requestData.period,
+          "schedule": requestData.schedule,
         },
       );
 
@@ -105,7 +110,7 @@ class UserHasTasksRepository implements MainApiRepository<Task> {
         apiRoutePath,
         data: {
           "user_id": sessionUser.userData.id,
-          "task_id": requestData['taskId'],
+          "task_id": requestData.task.id,
         },
       );
 
