@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:selfcare/app/data/models/task_model.dart';
-import 'package:selfcare/app/data/models/user_task.dart';
+import 'package:selfcare/app/data/models/user_task_model.dart';
 import 'package:selfcare/app/data/repositories/task_repository.dart';
 import 'package:selfcare/app/data/session_config/session_user.dart';
 import 'package:selfcare/app/screens/home_screen/controller.dart';
@@ -22,8 +22,11 @@ class AvailableTasksScreenController extends GetxController {
   bool get isloading => _isLoading.value;
   List<Task> get availableTaskList => _availableTaskList;
 
-  Future<void> storeNewUserTask(
-      int taskId, String period, String schedule) async {
+  set availableTaskList(List<Task> newList) {
+    _availableTaskList.value = newList;
+  }
+
+  Future<void> storeNewUserTask(int taskId, Set period, String schedule) async {
     UsersHasTasksRepository()
         .store(
       UserTask(
@@ -55,12 +58,21 @@ class AvailableTasksScreenController extends GetxController {
     );
   }
 
-  fillTaskList(dynamic json) {
+  Future<void> fillTaskList(dynamic json) async {
     if (json != null) {
-      json.forEach((task) {
+      await json.forEach((task) {
         _availableTaskList.add(
           Task.fromJson(task),
         );
+      });
+
+      Get.find<SessionUser>().userTaskList.forEach((userTask) {
+        print(userTask.task.id);
+        if (availableTaskList.any((task) {
+          return task.id == userTask.task.id;
+        })) {
+          _availableTaskList.removeWhere((task) => task.id == userTask.task.id);
+        }
       });
     }
   }

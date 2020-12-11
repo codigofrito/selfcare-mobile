@@ -1,18 +1,28 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:selfcare/app/data/models/user_task.dart';
+import 'package:selfcare/app/data/models/user_task_model.dart';
 import 'package:selfcare/app/data/repositories/users_has_tasks_repository.dart';
 import 'package:selfcare/app/data/session_config/session_user.dart';
 import 'package:selfcare/app/routes/screen_routes.dart';
 import 'package:selfcare/app/screens/splash_screen/binding.dart';
 import 'package:selfcare/app/screens/splash_screen/view.dart';
+import 'package:selfcare/app/shared/utils/moment.dart';
 
 class HomeScreenController extends GetxController {
+  @override
+  void onInit() {
+    super.onInit();
+  }
+
   RxBool _isLoading = true.obs;
   RxInt _perPage = 5.obs;
   RxInt _newTasksAvaliable = 1.obs;
+  RxList<UserTaskRow> _userTaskRowList = <UserTaskRow>[].obs;
+
+  List<UserTaskRow> get userTaskRowList => _userTaskRowList;
 
   SessionUser sessionUser = Get.find<SessionUser>();
 
@@ -24,6 +34,7 @@ class HomeScreenController extends GetxController {
   Future<void> fetchTasks() async {
     _isLoading.value = true;
     sessionUser.userTaskList.clear();
+    _userTaskRowList.clear();
 
     UsersHasTasksRepository().index().then(
       (response) {
@@ -33,6 +44,14 @@ class HomeScreenController extends GetxController {
             response.raw.toString(),
           ),
         );
+
+        _userTaskRowList.sort(
+          (userTaskRowA, userTaskRowB) {
+            DateTime userTaskRowADateA = userTaskRowA.scheduleDate;
+            DateTime userTaskRowADateB = userTaskRowB.scheduleDate;
+            return userTaskRowADateA.compareTo(userTaskRowADateB);
+          },
+        );
       },
     );
   }
@@ -40,9 +59,27 @@ class HomeScreenController extends GetxController {
   fillTaskList(dynamic json) {
     if (json != null) {
       json.forEach((userTasks) {
-        sessionUser.userTaskList.add(
-          UserTask.fromJson(userTasks),
-        );
+        var currentUserTask = UserTask.fromJson(userTasks);
+
+        var scheduleTime = currentUserTask.schedule.split(':');
+
+        currentUserTask.period.forEach((weekDay) {
+          _userTaskRowList.add(UserTaskRow(
+            Moment.nextDates(
+                    DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      int.parse(scheduleTime[0]),
+                      int.parse(scheduleTime[1]),
+                    ),
+                    weekDay)
+                .first,
+            currentUserTask,
+          ));
+        });
+
+        sessionUser.userTaskList.add(currentUserTask);
       });
     }
   }
@@ -52,7 +89,7 @@ class HomeScreenController extends GetxController {
       ScreenRoutes.USER_TASK_DETAILS,
       arguments: {
         "key": indexTask,
-        "userTask": userTaskList[indexTask],
+        "userTask": userTaskRowList[indexTask].userTask,
       },
     );
   }
@@ -78,4 +115,32 @@ class HomeScreenController extends GetxController {
     this.fetchTasks();
     super.onReady();
   }
+
+  showNotification() {}
+}
+
+class ReceivedNotification {
+  ReceivedNotification({
+    @required this.id,
+    @required this.title,
+    @required this.body,
+    @required this.payload,
+  });
+
+  final int id;
+  final String title;
+  final String body;
+  final String payload;
+}
+
+class UserTaskRow {
+  DateTime _scheduleDate;
+  UserTask _userTask;
+
+  UserTask get userTask => _userTask;
+  DateTime get scheduleDate => _scheduleDate;
+
+  UserTaskRow(DateTime scheduleDate, UserTask userTask)
+      : _scheduleDate = scheduleDate,
+        _userTask = userTask;
 }

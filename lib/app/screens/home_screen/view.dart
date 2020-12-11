@@ -5,6 +5,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:selfcare/app/data/session_config/session_user.dart';
 import 'package:selfcare/app/routes/screen_routes.dart';
 import 'package:selfcare/app/shared/utils/moment.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tinycolor/tinycolor.dart';
 import 'controller.dart';
 import 'package:flutter/material.dart';
@@ -44,21 +45,24 @@ class HomeScreen extends GetView<HomeScreenController> {
                               circularStrokeCap: CircularStrokeCap.round,
                               progressColor: Colors.red,
                               backgroundColor: Colors.white,
-                              center: CircleAvatar(
-                                backgroundColor: Colors.grey[200],
-                                radius: 35.0,
-                                backgroundImage: Get.find<SessionUser>()
-                                        .userData
-                                        .userUrlPhoto
-                                        .isNullOrBlank
-                                    ? AssetImage(
-                                        'assets/images/utils/default_avatar.png',
-                                      )
-                                    : NetworkImage(
-                                        Get.find<SessionUser>()
-                                            .userData
-                                            .userUrlPhoto,
-                                      ),
+                              center: GestureDetector(
+                                onTap: () => controller.showNotification(),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.grey[200],
+                                  radius: 35.0,
+                                  backgroundImage: Get.find<SessionUser>()
+                                          .userData
+                                          .userUrlPhoto
+                                          .isNullOrBlank
+                                      ? AssetImage(
+                                          'assets/images/utils/default_avatar.png',
+                                        )
+                                      : NetworkImage(
+                                          Get.find<SessionUser>()
+                                              .userData
+                                              .userUrlPhoto,
+                                        ),
+                                ),
                               ),
                             ),
                           ),
@@ -79,7 +83,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                     ),
                                   ),
                                   Text(
-                                    "3 tarefas realizadas",
+                                    "${controller.userTaskRowList.length} tarefas agendadas",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 15,
@@ -123,27 +127,27 @@ class HomeScreen extends GetView<HomeScreenController> {
                             padding: EdgeInsets.all(15.0),
                             shape: CircleBorder(),
                           ),
-                          Offstage(
-                            offstage: false ?? true,
-                            child: Container(
-                              width: 30,
-                              height: 30,
-                              child: Center(
-                                child: Material(
-                                  type: MaterialType.transparency,
-                                  child: Text(
-                                    "${controller.newTasksAvaliable}",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 12),
-                                  ),
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
+                          // Offstage(
+                          //   offstage: false ?? true,
+                          //   child: Container(
+                          //     width: 30,
+                          //     height: 30,
+                          //     child: Center(
+                          //       child: Material(
+                          //         type: MaterialType.transparency,
+                          //         child: Text(
+                          //           "${controller.newTasksAvaliable}",
+                          //           style: TextStyle(
+                          //               color: Colors.white, fontSize: 12),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     decoration: BoxDecoration(
+                          //       shape: BoxShape.circle,
+                          //       color: Colors.red,
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     )
@@ -166,9 +170,12 @@ class HomeScreen extends GetView<HomeScreenController> {
                   padding: const EdgeInsets.all(20.0),
                   child: controller.isloading
                       ? Container(
-                          child: userTaskRow(),
-                        )
-                      : controller.sessionUser.userTaskList.isEmpty
+                          child: Shimmer.fromColors(
+                          baseColor: Colors.grey[200],
+                          highlightColor: Colors.white,
+                          child: _userTaskRow(),
+                        ))
+                      : controller.userTaskRowList.isEmpty
                           ? Container(
                               width: 100,
                               child: Column(
@@ -206,8 +213,8 @@ class HomeScreen extends GetView<HomeScreenController> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: List.generate(
-                                (controller.sessionUser.userTaskList.length),
-                                (index) => userTaskRow(index),
+                                (controller.userTaskRowList.length),
+                                (index) => _userTaskRow(index),
                               ),
                             ),
                 ),
@@ -219,9 +226,9 @@ class HomeScreen extends GetView<HomeScreenController> {
     );
   }
 
-  Widget userTaskRow([int indexTask]) => Obx(
+  Widget _userTaskRow([int indexTask]) => Obx(
         () => SizedBox(
-          height: 380,
+          height: 350,
           width: Get.width,
           child: Stack(
             children: <Widget>[
@@ -254,18 +261,15 @@ class HomeScreen extends GetView<HomeScreenController> {
                                   image: indexTask == null
                                       ? AssetImage(
                                           'assets/images/utils/empty_image.png')
-                                      : controller
-                                                  .sessionUser
-                                                  .userTaskList[indexTask]
-                                                  .task
-                                                  .imageUrl ==
+                                      : controller.userTaskRowList[indexTask]
+                                                  .userTask.task.imageUrl ==
                                               null
                                           ? AssetImage(
                                               'assets/images/utils/empty_image.png')
                                           : NetworkImage(
                                               controller
-                                                  .sessionUser
-                                                  .userTaskList[indexTask]
+                                                  .userTaskRowList[indexTask]
+                                                  .userTask
                                                   .task
                                                   ?.imageUrl,
                                             ),
@@ -295,7 +299,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                               horizontal: 15,
                             ),
                             child: Text(
-                              "${controller.sessionUser.userTaskList.isNotEmpty ? controller.sessionUser.userTaskList[indexTask].task.title : ""}",
+                              "${controller.userTaskRowList.isNotEmpty ? controller.userTaskRowList[indexTask].userTask.task.title : ""}",
                               style: TextStyle(
                                 color: TinyColor(
                                         Theme.of(Get.context).primaryColor)
@@ -318,11 +322,10 @@ class HomeScreen extends GetView<HomeScreenController> {
                     width: Get.width,
                   ),
                   Positioned(
-                    top: 2,
+                    top: 3,
                     left: 58,
                     child: Container(
                       height: 40,
-                      width: 110,
                       decoration: BoxDecoration(
                         color: TinyColor(Theme.of(Get.context).primaryColor)
                             .darken(10)
@@ -332,29 +335,22 @@ class HomeScreen extends GetView<HomeScreenController> {
                           Radius.circular(10),
                         ),
                       ),
-                      child: Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Icon(
-                                Icons.access_time,
-                                size: 20,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                            ),
+                            child: Text(
+                              "${controller.userTaskRowList.isNotEmpty ? Moment.nextWeekDayString(controller.userTaskRowList[indexTask].scheduleDate) + " ás " + controller.userTaskRowList[indexTask].userTask.schedule.substring(0, 5) : "                      "}",
+                              style: TextStyle(
                                 color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Text(
-                                "${controller.sessionUser.userTaskList.isNotEmpty ? controller.sessionUser.userTaskList[indexTask].schedule.substring(0, 5) : ""}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -383,7 +379,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                         ),
                         Offstage(
                           offstage: (indexTask ?? 0) >=
-                              controller.sessionUser.userTaskList.length - 1,
+                              controller.userTaskRowList.length - 1,
                           child: Container(
                             width: 5,
                             height: 380,
@@ -403,7 +399,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                           ),
                           child: Center(
                             child: Text(
-                              "${controller.sessionUser.userTaskList.isEmpty ? "" : Moment.nextDates(DateTime.now(), int.parse(controller.userTaskList[indexTask].period)).first.day}",
+                              "${controller.userTaskRowList.isEmpty ? "" : controller.userTaskRowList[indexTask].scheduleDate.day}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -448,7 +444,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                                 alignment: WrapAlignment.center,
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 children:
-                                    "${controller.sessionUser.userTaskList.isEmpty ? "" : DateFormat('MMM', 'pt_Br').format(Moment.nextDates(DateTime.now(), int.parse(controller.userTaskList[indexTask].period)).first).capitalizeFirst}"
+                                    "${controller.userTaskRowList.isEmpty ? "" : DateFormat('MMM', 'pt_Br').format(controller.userTaskRowList[indexTask].scheduleDate).capitalizeFirst}"
                                         .split("")
                                         .map(
                                           (string) => Text(

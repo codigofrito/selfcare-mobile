@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:selfcare/app/data/models/user_model.dart';
-import 'package:selfcare/app/data/models/user_task.dart';
+import 'package:selfcare/app/data/models/user_task_model.dart';
 import 'package:selfcare/app/data/session_config/local_storage.dart';
 import 'package:selfcare/app/data/repositories/user_repository.dart';
 

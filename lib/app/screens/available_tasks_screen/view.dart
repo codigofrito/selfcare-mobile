@@ -77,7 +77,7 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
                 width: Get.width * .9,
                 height: 250,
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.grey[100],
                   borderRadius: BorderRadius.all(
                     Radius.circular(20),
                   ),
@@ -110,6 +110,7 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
                                   "",
                             ),
                           ),
+                          color: Colors.grey[200],
                           borderRadius: BorderRadius.all(
                             Radius.circular(20),
                           ),
@@ -127,12 +128,15 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(
-                            '${controller.availableTaskList[indexTask].title}',
-                            style: TextStyle(
-                                fontSize: 23,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(Get.context).primaryColor),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '${controller.availableTaskList[indexTask].title}',
+                              style: TextStyle(
+                                  fontSize: 23,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(Get.context).primaryColor),
+                            ),
                           ),
                           SizedBox(
                             height: 10,
@@ -216,10 +220,7 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
               RaisedButton(
                 onPressed: () => controller.storeNewUserTask(
                   taskId,
-                  schedule.first
-                      .toString()
-                      .replaceFirst('{', '')
-                      .replaceFirst('}', ''),
+                  schedule,
                   '$scheduleHour:$scheduleMinute',
                 ),
                 color: Get.theme.primaryColor,
@@ -274,7 +275,7 @@ class AvailableTasksScreen extends GetView<AvailableTasksScreenController> {
   }
 }
 
-enum Days { DOM, SEG, TER, QUA, QUI, SEX, SAB }
+enum Days { SEG, TER, QUA, QUI, SEX, SAB, DOM }
 
 class DayWeek extends StatefulWidget {
   final String label;

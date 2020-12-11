@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:selfcare/app/data/interfaces/repository_interface.dart';
-import 'package:selfcare/app/data/models/user_task.dart';
+import 'package:selfcare/app/data/models/user_task_model.dart';
 import 'package:selfcare/app/data/providers/main_api.dart';
 import 'package:selfcare/app/data/session_config/session_user.dart';
 
@@ -63,7 +63,7 @@ class UsersHasTasksRepository implements MainApiRepository<UserTask> {
           "user_id": sessionUser.userData.id,
           "task_id": requestData.task.id,
           "push_notification": "1",
-          "period": requestData.period,
+          "period": requestData.period.map((i) => i.toString()).join(","),
           "schedule": requestData.schedule,
         },
       );
@@ -87,7 +87,7 @@ class UsersHasTasksRepository implements MainApiRepository<UserTask> {
           "user_id": sessionUser.userData.id,
           "task_id": requestData.task.id,
           "push_notification": "1",
-          "period": requestData.period,
+          "period": requestData.period.map((i) => i.toString()).join(","),
           "schedule": requestData.schedule,
         },
       );
